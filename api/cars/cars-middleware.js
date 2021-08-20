@@ -14,7 +14,7 @@ const checkCarId = async (req, res, next) => {
   }catch(err){
     next(err);
   }
-}
+};
 
 const checkCarPayload = (req, res, next) => {
   const error = { status: 400 }
@@ -38,40 +38,38 @@ const checkCarPayload = (req, res, next) => {
   }catch(err){
     next(err);
   }
-}
+};
 
-const checkVinNumberValid = async (req, res, next) => {
-  const isValid = await vinValidator.validate(req.body.vin)
-try{
-  if(isValid){
+const checkVinNumberValid = (req, res, next) => {
+  if (vinValidator.validate(req.body.vin)){
     next();
   }else{
-    next({ status: 404, message: `vin ${req.body.vin} is invalid` })
+    next({ 
+      status: 400,
+      message: `vin ${req.body.vin} is invalid`
+    })
   }
-}catch(err){
-  next(err);
-}
-}
+};
 
 const checkVinNumberUnique = async (req, res, next) => {
-  const {vin} = req.body;
-
   try{
-    const checkedVin = await Cars.checkUnique(vin);
-
-    if(checkedVin){
-      next({ status: 400, message: `vin ${vin} already exists` })
+    const existingVin = await Cars.checkUnique(req.body.vin);
+    if(!existingVin){
+      next()
     }else{
-      next();
+      next({ 
+        status: 400,
+        message: `vin ${req.body.vin} already exists`
+      })
     }
   }catch(err){
     next(err);
   }
-}
+};
 
 module.exports = {
   checkCarId,
   checkCarPayload,
   checkVinNumberValid,
   checkVinNumberUnique
-}
+};
