@@ -1,7 +1,17 @@
 const express = require("express")
 
-const server = express()
+const CarsRouter = require("./cars/cars-router");
 
-// DO YOUR MAGIC
+const server = express();
+
+server.use(express.json());
+
+server.use("/api/cars", CarsRouter);
+
+server.use("*", (req, res) => {
+    res.status(404).json({
+        message: "Invalid Endpoint - Use /api/accounts"
+    });
+});
 
 module.exports = server
